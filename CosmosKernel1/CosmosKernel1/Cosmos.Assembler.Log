@@ -5955,8 +5955,6 @@ Method 'SystemVoidCosmosKernel1KernelRun'
 	0 Call
 	1 Stloc
 	0 Ldc_I4
-	1 Stloc
-	0 Ldc_I4
 	1 Newarr
 	1 Stloc
 	0 Ldc_I4
@@ -5967,6 +5965,11 @@ Method 'SystemVoidCosmosKernel1KernelRun'
 	1 Stloc
 	0 Ldc_I4
 	1 Newarr
+	1 Stloc
+	0 Ldc_I4
+	1 Newarr
+	1 Stloc
+	0 Ldc_I4
 	1 Stloc
 	0 Ldloc
 	1 Callvirt
@@ -6176,19 +6179,6 @@ Method 'SystemVoidCosmosKernel1KernelRun'
 	2 Ldc_I4
 	3 Callvirt
 	1 Stloc
-	0 Ldloc
-	1 LdStr
-	2 Callvirt
-	1 Ldc_I4
-	2 Ceq
-	1 Stloc
-	0 Ldloc
-	1 Branch
-	0 LdStr
-	1 Call
-	0 Nop
-	0 Br
-	0 Nop
 	0 Ldc_I4
 	1 Stloc
 	0 LdStr
@@ -6196,6 +6186,15 @@ Method 'SystemVoidCosmosKernel1KernelRun'
 	0 Br
 	0 Nop
 	0 Call
+	1 Stloc
+	0 Ldloc
+	1 Ldloc
+	2 Callvirt
+	2 Add
+	1 Stloc
+	0 Ldloc
+	1 Ldloc
+	2 Call
 	1 Stloc
 	0 Nop
 	0 Ldloc
@@ -6205,7 +6204,101 @@ Method 'SystemVoidCosmosKernel1KernelRun'
 	1 Stloc
 	0 Ldloc
 	1 Branch
+	0 Ldc_I4
+	1 Stloc
+	0 Ldc_I4
+	1 Stloc
+	0 Br
 	0 Nop
+	0 Ldloc
+	1 Ldloc
+	2 Ldelem_Ref
+	1 Ldnull
+	2 Ceq
+	1 Ldc_I4
+	2 Ceq
+	1 Stloc
+	0 Ldloc
+	1 Branch
+	0 Nop
+	0 Ldloc
+	1 Stloc
+	0 Br
+	0 Nop
+	0 Ldloc
+	1 Ldc_I4
+	2 Add
+	1 Stloc
+	0 Ldloc
+	1 Ldc_I4
+	2 Clt
+	1 Stloc
+	0 Ldloc
+	1 Branch
+	0 Ldc_I4
+	1 Stloc
+	0 Ldloc
+	1 Ldloc
+	2 LdStr
+	3 Stelem_Ref
+	0 Ldloc
+	1 Ldloc
+	2 LdStr
+	3 Stelem_Ref
+	0 Ldloc
+	1 Ldloc
+	2 Ldc_I4
+	3 Newarr
+	3 Stloc
+	2 Ldloc
+	3 Ldc_I4
+	4 Call
+	5 Box
+	5 Stelem_Ref
+	2 Ldloc
+	3 Ldc_I4
+	4 LdStr
+	5 Stelem_Ref
+	2 Ldloc
+	3 Ldc_I4
+	4 Call
+	5 Box
+	5 Stelem_Ref
+	2 Ldloc
+	3 Ldc_I4
+	4 LdStr
+	5 Stelem_Ref
+	2 Ldloc
+	3 Ldc_I4
+	4 Call
+	5 Box
+	5 Stelem_Ref
+	2 Ldloc
+	3 Ldc_I4
+	4 Call
+	5 Box
+	5 Stelem_Ref
+	2 Ldloc
+	3 Call
+	3 Stelem_Ref
+	0 Ldloc
+	1 Ldloc
+	2 Ldc_I4
+	3 Ldloc
+	4 Ldc_I4
+	5 Div
+	4 Ldc_I4
+	5 Mul
+	4 Add
+	3 Stelem_I4
+	0 Ldloc
+	1 Ldloc
+	2 Ldloc
+	3 Stelem_Ref
+	0 Ldloc
+	1 Ldc_I4
+	2 Add
+	1 Stloc
 	0 Nop
 	0 Br
 	0 Ldloc
@@ -6247,6 +6340,9 @@ Method 'SystemVoidCosmosKernel1KernelRun'
 	0 Br
 	0 Nop
 	0 Ldloc
+	1 Call
+	0 Nop
+	0 Ldloc
 	1 Ldloc
 	2 Ldelem_Ref
 	1 Ldnull
@@ -6283,6 +6379,8 @@ Method 'SystemVoidCosmosKernel1KernelRun'
 	0 Ldloc
 	1 Ldc_I4
 	2 Ldloc
+	3 Ldloc
+	4 Ldelem_Ref
 	3 Stelem_Ref
 	0 Ldloc
 	1 Ldc_I4
@@ -6291,6 +6389,9 @@ Method 'SystemVoidCosmosKernel1KernelRun'
 	0 Ldloc
 	1 Ldc_I4
 	2 Ldloc
+	3 Ldloc
+	4 Ldelem_I4
+	3 Box
 	3 Stelem_Ref
 	0 Ldloc
 	1 Call
@@ -10084,24 +10185,13 @@ Method 'SystemStringCosmosIL2CPUCustomImplementationSystemStringImplConcatSystem
 	0 Br
 	0 Ldloc
 	1 Ret
-Method 'SystemBooleanCosmosCorePlugsStringImplContainsSystemString'
+Method 'SystemVoidCosmosSystemPlugsSystemSystemConsoleImplWriteSystemInt32'
 	0 Nop
-	0 Ldarg
-	1 Ldarg
-	2 Callvirt
-	1 Ldc_I4
-	2 Ceq
-	1 Stloc
-	0 Ldloc
-	1 Branch
-	0 Ldc_I4
-	1 Stloc
-	0 Br
-	0 Ldc_I4
-	1 Stloc
-	0 Br
-	0 Ldloc
-	1 Ret
+	0 Ldarga
+	1 Call
+	1 Call
+	0 Nop
+	0 Ret
 Method 'SystemVoidSystemTextUnicodeEncodingctorSystemBooleanSystemBooleanSystemBoolean'
 	0 Ldarg
 	1 Ldc_I4

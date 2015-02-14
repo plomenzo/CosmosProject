@@ -21,11 +21,12 @@ namespace CosmosKernel1
         {
             Console.Write("\n> ");
             var input = Console.ReadLine();
-            var editingFile = false;
             String[] filenames = new String[DIR_SIZE];
+            String[] filedata = new String[DIR_SIZE];
             String[] fileext = new String[DIR_SIZE];
             String[] filedate = new String[DIR_SIZE];
             int[] filesize = new int[DIR_SIZE];
+            int numFiles = 0;
 
             if (input.ToLower() == "help") //help
             {
@@ -70,24 +71,45 @@ namespace CosmosKernel1
             } else if (input.ToLower().Substring(0,5) == "echo ") //echo
             {
                  Console.WriteLine(input.Substring(7, 100));
-            } else if (input.ToLower().Substring(0, 5) == "create ") //create
+            } else if (input.ToLower().Substring(0, 7) == "create ") //create
             {
+                //TODO*************UNDER CONSTRUCTION****************
+
                 var fileName = input.Substring(7, 100);
 
-                if (fileName.Contains(" "))
-                    Console.WriteLine("ERROR: Filename may not contain a space");
-                else
-                {
+                //if (fileName.Contains(" "))
+                //    Console.WriteLine("ERROR: Filename may not contain a space");
+                //else
+                //{
                     int runningsize = 0;
                     String inputdata = "";
 
-                    while (input.ToLower() != "save")
+                    while (input.ToLower() != "save") //gathering each lines input data
                     {
                         input = Console.ReadLine();
+                        runningsize += input.Length;
+                        inputdata += input;
                     }
-                    //In the current implementation at least, strings take up 20+(n/2)*4 bytes
 
-                }
+                    int index = -1;
+                    
+                    for (int i = 0; i < DIR_SIZE; i++) //finds first avaible slot for a new file
+                    {
+                        if (filenames[i] == null)
+                        {
+
+                            index = i;
+                            break;
+                        }
+                    }
+
+                    filenames[index] = "name";//TODO get file name somehow
+                    fileext[index] = ".txt"; //TODO file file ext somehow
+                    filedate[index] = Cosmos.Hardware.RTC.Month + "/" + Cosmos.Hardware.RTC.DayOfTheMonth + "/" + Cosmos.Hardware.RTC.Century + Cosmos.Hardware.RTC.Year;
+                    filesize[index] = 20 + (runningsize / 2) * 4; //"In the current implementation at least, strings take up 20+(n/2)*4 bytes"
+                    filedata[index] = inputdata;
+                    numFiles++;
+                //}
 
 
 
@@ -101,10 +123,11 @@ namespace CosmosKernel1
                 Console.WriteLine("---------------------------------------------------------------------");
                 for (int i = 0; i < DIR_SIZE; i++)
                 {
+                    Console.Write(i);
                     if (filenames[i] == null)
                         continue;
-
-                    Console.WriteLine(filenames[i] + "\t" + fileext[i] + "\t" + filedate + "\t" + filesize);
+                    
+                    Console.WriteLine(filenames[i] + "\t" + fileext[i] + "\t" + filedate[i] + "\t" + filesize[i]);
                 }
             }
             else //unknown command

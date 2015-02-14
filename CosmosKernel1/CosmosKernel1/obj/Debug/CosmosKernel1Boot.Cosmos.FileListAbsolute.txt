@@ -1,1 +1,2 @@
 c:\users\preston\documents\visual studio 2013\Projects\CosmosKernel1\CosmosKernel1\obj\Debug\CosmosKernel1Boot.CosmosResolveAssemblyReference.cache
+E:\Desktop\CS 431\CosmosProject\CosmosKernel1\CosmosKernel1\obj\Debug\CosmosKernel1Boot.CosmosResolveAssemblyReference.cache
