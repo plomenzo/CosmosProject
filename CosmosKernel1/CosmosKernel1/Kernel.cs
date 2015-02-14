@@ -11,9 +11,19 @@ namespace CosmosKernel1
     public class Kernel : Sys.Kernel
     {
         const int DIR_SIZE = 100;
+        String[] filenames;
+        String[] filedata;
+        String[] fileext;
+        String[] filedate;
+        int[] filesize;
 
         protected override void BeforeRun()
         {
+            filenames = new String[DIR_SIZE];
+            filedata = new String[DIR_SIZE];
+            fileext = new String[DIR_SIZE];
+            filedate = new String[DIR_SIZE];
+            filesize = new int[DIR_SIZE];
             Console.WriteLine("Cosmos booted successfully. \nType 'help' to see available commands.");
         }
 
@@ -21,11 +31,7 @@ namespace CosmosKernel1
         {
             Console.Write("\n> ");
             var input = Console.ReadLine();
-            String[] filenames = new String[DIR_SIZE];
-            String[] filedata = new String[DIR_SIZE];
-            String[] fileext = new String[DIR_SIZE];
-            String[] filedate = new String[DIR_SIZE];
-            int[] filesize = new int[DIR_SIZE];
+            
             int numFiles = 0;
 
             if (input.ToLower() == "help") //help
@@ -73,8 +79,6 @@ namespace CosmosKernel1
                  Console.WriteLine(input.Substring(7, 100));
             } else if (input.ToLower().Substring(0, 7) == "create ") //create
             {
-                //TODO*************UNDER CONSTRUCTION****************
-
                 var fileName = input.Substring(7, 100);
 
                 //if (fileName.Contains(" "))
@@ -83,6 +87,7 @@ namespace CosmosKernel1
                 //{
                     int runningsize = 0;
                     String inputdata = "";
+                    String fullFileName = input.Substring(7, 100);
 
                     while (input.ToLower() != "save") //gathering each lines input data
                     {
@@ -94,25 +99,21 @@ namespace CosmosKernel1
                     int index = -1;
                     
                     for (int i = 0; i < DIR_SIZE; i++) //finds first avaible slot for a new file
-                    {
                         if (filenames[i] == null)
                         {
-
                             index = i;
                             break;
                         }
-                    }
 
-                    filenames[index] = "name";//TODO get file name somehow
-                    fileext[index] = ".txt"; //TODO file file ext somehow
+                    int indexOfDot = fullFileName.LastIndexOf('.',fullFileName.Length - 1, fullFileName.Length-2);
+                    filenames[index] = fullFileName.Substring(0, indexOfDot);
+                    fileext[index] = fullFileName.Substring(indexOfDot, indexOfDot + 10);
                     filedate[index] = Cosmos.Hardware.RTC.Month + "/" + Cosmos.Hardware.RTC.DayOfTheMonth + "/" + Cosmos.Hardware.RTC.Century + Cosmos.Hardware.RTC.Year;
                     filesize[index] = 20 + (runningsize / 2) * 4; //"In the current implementation at least, strings take up 20+(n/2)*4 bytes"
                     filedata[index] = inputdata;
                     numFiles++;
+
                 //}
-
-
-
 
             } else if (input.ToLower().Substring(0, 5) == "save ") //save
             {
@@ -123,11 +124,10 @@ namespace CosmosKernel1
                 Console.WriteLine("---------------------------------------------------------------------");
                 for (int i = 0; i < DIR_SIZE; i++)
                 {
-                    Console.Write(i);
                     if (filenames[i] == null)
                         continue;
-                    
-                    Console.WriteLine(filenames[i] + "\t" + fileext[i] + "\t" + filedate[i] + "\t" + filesize[i]);
+
+                    Console.WriteLine(filenames[i] + "               \t" + fileext[i] + "     \t" + filedate[i] + "\t" + filesize[i] + " b");
                 }
             }
             else //unknown command
