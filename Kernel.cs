@@ -122,6 +122,8 @@ namespace CosmosKernel1
                 filedata[index] = inputdata;
                 numFiles++;
 
+                Console.WriteLine("*** File Saved ***");
+
                 //}
 
             }
@@ -142,17 +144,35 @@ namespace CosmosKernel1
                 }
             }
             // IF INPUT IS SET 
-            else if (input.ToLower().Substring(0, 4) == "set ") 
+            else if (input.ToLower().Substring(0, 4) == "set ")
             {
-                string varName = input.Substring(4, input.IndexOf('=') - 5);    
+                string varName = input.Substring(4, input.IndexOf('=') - 5);
                 string inputOperand = "";
                 char operators = ' ';
                 int sum = 0;
+                string tempInput = "";
+
+                //***************************************
+                //removes spaces after "= "
+                tempInput = input;
+                for (int i = (tempInput.IndexOf('=') + 3); i < tempInput.Length; i++)
+                    if (tempInput[i] == ' ')
+                    {
+                        String front, back;
+                        front = tempInput.Substring(0, i);
+                        back = tempInput.Substring(i + 1, tempInput.Length);
+                        tempInput = front + back;
+                        i--;
+                    }
+
+                input = tempInput;
+                //*******************************************
+
                 // Iterates through each char in string starting from end of command
                 for (int x = (input.IndexOf('=') + 2); x < input.Length; x++)
                 {
                     // Sets the first operand if there is an arithmetic expression
-                    if ((input[x] == '+' || input[x] == '-' || input[x] == '*' || input[x] == '/' || input[x] == '&' || input[x] == '|' || input[x] == '^') 
+                    if ((input[x] == '+' || input[x] == '-' || input[x] == '*' || input[x] == '/' || input[x] == '&' || input[x] == '|' || input[x] == '^')
                         && operators == ' ')
                     {
                         operators = input[x];
@@ -204,10 +224,10 @@ namespace CosmosKernel1
                     }
                     else // Iterates through char's until it reaches an operator
                         inputOperand += input[x];
-                    // If there is no arithmetic expression set variable to user input
+                    // If there is no arithmetic expression set variable to user input //OR VARIABLE IS A STRING
                     if (operators == ' ' && x == input.Length - 1)
                         sum += Int32.Parse(inputOperand);
-                     // Reaches end of expression, perform last calculation
+                    // Reaches end of expression, perform last calculation
                     else if (x == input.Length - 1 && operators != ' ')
                     {
                         if (operators == '+')
@@ -227,8 +247,8 @@ namespace CosmosKernel1
                     }
                 }
                 // Finds first avaible slot for a new variable and value
-                for (int i = 0; i < DIR_SIZE; i++)  
-                {   
+                for (int i = 0; i < DIR_SIZE; i++)
+                {
                     // Resets value is same variable is chosen 
                     if (variable[i] == varName)
                     {
@@ -249,7 +269,7 @@ namespace CosmosKernel1
             else if (input.ToLower().Substring(0, 4) == "out ")
             {
                 // Sets the variable to the the chosen variable
-                string varName = input.Substring(4, input.Length); 
+                string varName = input.Substring(4, input.Length);
                 // Looks for value and outputs value for selected variable
                 for (int i = 0; i < DIR_SIZE; i++)
                 {
