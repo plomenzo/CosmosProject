@@ -160,18 +160,24 @@ namespace CosmosKernel1
 
                 //***************************************
                 //removes spaces after "= "
-                for (int i = (input.IndexOf('=') + 2); i < input.Length; i++)
-                {
-                    if (input[i] == '"' || input[i] == ' ' || (input[i] == '+' && stringConcat == true))
+                    for (int i = (input.IndexOf('=') + 2); i < input.Length; i++)
                     {
-                        if (input[i] == '"')
-                            stringConcat = true;
-                        continue;
+                       if (input[i] == '"' || input[i] == ' ' || (input[i] == '+' && stringConcat == true))
+                       {
+                           if (input[i] == '"')
+                           {
+                                stringConcat = true;
+                                break;
+                           }
+                               
+                           continue;
+                        }
+                        tempInput += input[i];
                     }
-                    tempInput += input[i];
-                }
-                input = tempInput;
-                
+
+                    //Console.Write("output of temp------->" + tempInput);
+                if (!stringConcat)
+                    input = tempInput;
                 //*******************************************
                 if (stringConcat)
                 {
