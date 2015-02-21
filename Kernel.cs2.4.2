@@ -95,10 +95,6 @@ namespace CosmosKernel1
             {
                 var fileName = input.Substring(7, 100);
 
-                //if (fileName.Contains(" "))
-                //    Console.WriteLine("ERROR: Filename may not contain a space");
-                //else
-                //{
                 int runningsize = 0;
                 String inputdata = "";
                 String fullFileName = input.Substring(7, 100);
@@ -128,9 +124,6 @@ namespace CosmosKernel1
                 numFiles++;
 
                 Console.WriteLine("*** File Saved ***");
-
-                //}
-
             }
             else if (input.ToLower().Substring(0, 5) == "save ") //save
             {
@@ -164,7 +157,7 @@ namespace CosmosKernel1
                 {
                     for (int x = 0; x < DIR_SIZE; x++)
                     {
-                        if ((tempInput == concatVariable[x] || tempInput == variable[x])) 
+                        if ((tempInput == concatVariable[x] || tempInput == variable[x]))
                         {
                             if (tempInput == concatVariable[x])
                             {
@@ -176,7 +169,7 @@ namespace CosmosKernel1
                             break;
                         }
                     }
-                    
+
                     if (input[i] == '"' || input[i] == ' ' || (input[i] == '+' && stringConcat == true))
                     {
                         if (input[i] == '"')
@@ -185,8 +178,8 @@ namespace CosmosKernel1
                     }
                     tempInput += input[i];
                 }
-                input = tempInput;   
-                
+                input = tempInput;
+
                 //*******************************************
                 if (stringConcat)
                 {
