@@ -55,6 +55,7 @@ namespace CosmosKernel1
                 Console.WriteLine("\t-time\tDisplays the current time");
                 Console.WriteLine("\t-set\t Set variable to an expression");
                 Console.WriteLine("\t-out\t Display variable value");
+                Console.WriteLine("\t-run <filename>.bat\t Runs batch file.");
             }
             else if (input.ToLower() == "time") //time
             {
@@ -86,6 +87,38 @@ namespace CosmosKernel1
                 }
 
                 Console.WriteLine("The current date is: " + day + " " + Cosmos.Hardware.RTC.Month + "/" + Cosmos.Hardware.RTC.DayOfTheMonth + "/" + Cosmos.Hardware.RTC.Century + Cosmos.Hardware.RTC.Year);
+            }else if (input.ToLower().Substring(0, 4) == "run ") {//run batch
+                var fileName = input.Substring(4, 100);
+                int index = -1;
+
+                for (int i = 0; i < DIR_SIZE; i++)
+                {
+                    if (filenames[i] != null && fileName == filenames[i] + fileext[i])
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+
+                if (index == -1)
+                    Console.WriteLine("File not found.");
+                else
+                {
+                    String data = filedata[index];
+                    while (data.Contains("\n"))
+                    {
+                        int lineEnd = data.IndexOf('\n'); //MUST FIND LOCATION OF NEW LINE SOMEHOW
+                        String line = data.Substring(0, lineEnd);
+
+                        Console.WriteLine("TEST " + line);
+                        line = line.Substring(lineEnd + 1, 1000);
+                    }
+                    Console.WriteLine("/execution done");
+                }
+
+
+
+            
             }
             else if (input.ToLower().Substring(0, 5) == "echo ") //echo
             {
