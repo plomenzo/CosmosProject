@@ -22,6 +22,15 @@ namespace CosmosKernel1
         String[] concatValue;
         bool stringConcat;
         int numFiles;
+	char[] postFix;
+	int[] arithmeticStack;
+	String[] inputArray;
+	int stackTop;
+	string postfix; 
+	int ndx;
+	string test;
+	int interAns;
+	int inputArrayLength;
 
         protected override void BeforeRun()
         {
@@ -37,6 +46,225 @@ namespace CosmosKernel1
             numFiles = 0;
             Console.WriteLine("Cosmos booted successfully. \nType 'help' to see available commands.");
         }
+	
+	//******************************** CREATES POSTFIX STACK ****************************************************
+        public void push(char c)
+        { postFix[++stackTop] = c; }
+
+        public char pop()
+        { return postFix[stackTop--]; }
+
+        public bool isEmpty()
+        { return (stackTop == -1); }
+
+        //******************************* CREATES ARITHMETIC STACK*************************************************
+        public void pushAs(int i)
+        { arithmeticStack[++stackTop] = i; }
+
+        public int popAs()
+        { return arithmeticStack[stackTop--]; }
+
+        public bool isEmptyAs()
+        { return (stackTop == -1); }
+
+	        //******************************** CREATES POSTFIX CONVERSION ********************************************
+        public void ConvertInfix(String input)
+        {
+            postFix = new char[input.Length];
+            inputArray = new String[inputArrayLength];
+            stackTop = -1;
+            postfix = "";
+            ndx = -1;
+            test = "";
+
+            for(int x = 0; x < input.Length; x++)
+            {
+                char ch = input[x];
+                switch(ch)
+                { 
+                    case '|':
+                        inputArray[++ndx] = postfix;
+                        postfix = "";
+                        operators(ch, 1);
+                        break;
+
+                    case '^':
+                        inputArray[++ndx] = postfix;
+                        postfix = "";
+                        operators(ch, 2);
+                        break;
+
+                    case '&':
+                        inputArray[++ndx] = postfix;
+                        postfix = "";
+                        operators(ch, 3);
+                        break;
+
+                    case '+': 
+                    case '-':
+                        if (postfix != "")
+                        {
+                            inputArray[++ndx] = postfix;
+                            postfix = "";
+                        }
+                        operators(ch, 4);
+                        break; 
+
+                    case '*':
+                    case '/':
+                        if (postfix != "")
+                        {
+                            inputArray[++ndx] = postfix;
+                            postfix = "";
+                        }
+                        operators(ch, 5);
+                        break;
+
+                    case '(':
+                        push(ch);
+                        break;
+                    case ')':
+                        if (postfix != "")
+                        {
+                            inputArray[++ndx] = postfix;
+                            postfix = "";
+                        }
+                        paren(ch);
+                        break;
+
+                    default:
+                        postfix += ch.ToString();
+                        if (x == input.Length -1 && input[x] != ')')
+                            inputArray[++ndx] = postfix;
+                        test += postfix;
+                        break;
+                }
+            }
+            while(!isEmpty())
+            {
+                string temp = pop().ToString();
+                inputArray[++ndx] = temp;
+                test += temp;
+            }
+ 
+        }
+        
+        // Process the operator 
+        public void operators(char op, int prec1) 
+        {
+            while(isEmpty() == false)
+            {
+                char operTop = pop(); 
+
+                if ( operTop == '(')
+                {
+                    push(operTop);
+                    break;
+                }
+                else
+                {
+                    int prec2;
+
+                    if (operTop == '|')
+                        prec2 = 1;
+                    if (operTop == '^')
+                        prec2 = 2;
+                    if (operTop == '&')
+                        prec2 = 3;
+                    if (operTop == '+' || operTop == '-')
+                        prec2 = 4;
+                    else
+                        prec2 = 5;
+                    if (prec2 < prec1)
+                    {
+                        push(operTop);
+                        break;
+                    }
+                    else
+                    {
+                        string temp = operTop.ToString();
+                        inputArray[++ndx] = temp;
+                        test += temp;
+                    }
+                }
+            }
+            push(op); 
+        }
+
+        // Process the parenthesis 
+        public void paren(char ch)
+        {
+            while ( !isEmpty())
+            {
+                char chx = pop();
+                if (chx == '(')
+                    break;
+                else
+                {
+                    string temp = chx.ToString();
+                    inputArray[++ndx] = temp;
+                    test += temp;
+                }
+            }
+        }
+
+	//***************************************** ARITHMETIC ON POSTFIX **********************************
+        public void convertPost()
+        {
+            
+            stackTop = -1;
+            arithmeticStack = new int[inputArray.Length];
+            int x;
+            string ch;
+            int num1;
+            int num2;  
+            interAns = 0;
+            
+            for (x = 0; x < inputArray.Length; x++)  
+            {
+               ch = inputArray[x];  
+               
+               if (ch != "+" && ch != "-" && ch != "*" && ch != "/" && ch != "&" && ch != "|" && ch != "^")
+                   pushAs(int.Parse(ch.ToString()));
+
+               else
+               {
+                   num2 = popAs();
+                   num1 = popAs();
+                   switch (ch[0])
+                   {
+                       case '+':
+                           interAns = num1 + num2;
+                           break;
+                       case '-':
+                           interAns = num1 - num2;
+                           break;
+                       case '*':
+                           interAns = num1 * num2;
+                           break;
+                       case '/':
+                           interAns = num1 / num2;
+                           break;
+                       case '&':
+                           interAns = num1 & num2;
+                           break;
+                       case '^':
+                           interAns = num1 ^ num2;
+                           break;
+                       case '|':
+                           interAns = num1 | num2;
+                           break;
+                       default:
+                           interAns = 0;
+                           break;
+                   }
+                   pushAs(interAns);
+               } 
+            }
+             
+            interAns = popAs(); 
+        }
+
 
         protected override void Run()
         {
@@ -186,156 +414,80 @@ namespace CosmosKernel1
         private void ComSet(String input)
         {
             string varName = input.Substring(4, input.IndexOf('=') - 5);
-            string inputOperand = "";
-            char operators = ' ';
-            int sum = 0;
             string tempInput = "";
             stringConcat = false;
 
             //***************************************
-            //removes spaces after "= "
-            for (int i = (input.IndexOf('=') + 2); i < input.Length; i++)
-            {
-                for (int x = 0; x < DIR_SIZE; x++)
+               inputArrayLength = 0; 
+                //removes spaces after "= " 
+                for (int i = (input.IndexOf('=') + 2); i < input.Length; i++)
                 {
-                    if ((tempInput == concatVariable[x] || tempInput == variable[x]))
-                    {
-                        if (tempInput == concatVariable[x])
+                    if (input[i] == '(' || input[i] == ')')
+                        inputArrayLength++; 
+                    for (int x = 0; x < DIR_SIZE; x++)
+                    {    //Checks to see if there is variable 
+                        if ((tempInput == concatVariable[x] || tempInput == variable[x])) // dont need if 
                         {
-                            tempInput = concatValue[x];
-                            stringConcat = true;
+                            if (tempInput == concatVariable[x])
+                            {
+                                tempInput = concatValue[x];
+                                stringConcat = true;
+                            }
+                            else
+                                tempInput = variableValue[x].ToString();
+                            break;
                         }
-                        else
-                            tempInput = variableValue[x].ToString();
-                        break;
                     }
-                }
-
-                if (input[i] == '"' || input[i] == ' ' || (input[i] == '+' && stringConcat == true))
-                {
-                    if (input[i] == '"')
-                        stringConcat = true;
-                    continue;
-                }
-                tempInput += input[i];
-            }
-            input = tempInput;
-
-            //*******************************************
-            if (stringConcat)
-            {
-                for (int i = 0; i < DIR_SIZE; i++)
-                {
-                    // Resets value is same variable is chosen 
-                    if (concatVariable[i] == varName)
+                    // This determines if there is a string 
+                    if (input[i] == '"' || input[i] == ' ' || (input[i] == '+' && stringConcat == true)) // dont need ' '
                     {
-                        concatValue[i] = input;
-                        break;
+                        if (input[i] == '"')
+                            stringConcat = true;
+                        continue;
                     }
-                    // Places variable and value into 1st empty index
-                    else if (concatVariable[i] == null)
+                    tempInput += input[i];
+                }
+                input = tempInput;
+               inputArrayLength = input.Length - inputArrayLength;
+                //*******************************************
+                if (stringConcat)
+                {
+                    for (int i = 0; i < DIR_SIZE; i++)
                     {
-                        concatVariable[i] = varName;
-                        concatValue[i] = input;
-                        break;
+                        // Resets value is same variable is chosen 
+                        if (concatVariable[i] == varName)
+                        {
+                            concatValue[i] = input;
+                            break;
+                        }
+                        // Places variable and value into 1st empty index
+                        else if (concatVariable[i] == null)
+                        {
+                            concatVariable[i] = varName;
+                            concatValue[i] = input;
+                            break;
+                        }
                     }
                 }
-            }
             else
             {
-                // Iterates through each char in string starting from end of command
-                for (int x = 0; x < input.Length; x++)
-                {
-                    // Sets the first operand if there is an arithmetic expression
-                    if ((input[x] == '+' || input[x] == '-' || input[x] == '*' || input[x] == '/' || input[x] == '&' || input[x] == '|' || input[x] == '^')
-                        && operators == ' ')
-                    {
-                        operators = input[x];
-                        sum += Int32.Parse(inputOperand);
-                        inputOperand = "";
-                    }
-                    // If more the two operands 
-                    else if (input[x] == '+')
-                    {
-                        sum += Int32.Parse(inputOperand);
-                        inputOperand = "";
-                        operators = input[x];
-                    }
-                    else if (input[x] == '-')
-                    {
-                        sum -= Int32.Parse(inputOperand);
-                        inputOperand = "";
-                        operators = input[x];
-                    }
-                    else if (input[x] == '/')
-                    {
-                        sum /= Int32.Parse(inputOperand);
-                        inputOperand = "";
-                        operators = input[x];
-                    }
-                    else if (input[x] == '*')
-                    {
-                        sum *= Int32.Parse(inputOperand);
-                        inputOperand = "";
-                        operators = input[x];
-                    }
-                    else if (input[x] == '&')
-                    {
-                        sum &= Int32.Parse(inputOperand);
-                        inputOperand = "";
-                        operators = input[x];
-                    }
-                    else if (input[x] == '|')
-                    {
-                        sum |= Int32.Parse(inputOperand);
-                        inputOperand = "";
-                        operators = input[x];
-                    }
-                    else if (input[x] == '^')
-                    {
-                        sum ^= Int32.Parse(inputOperand);
-                        inputOperand = "";
-                        operators = input[x];
-                    }
-                    else // Iterates through char's until it reaches an operator
-                        inputOperand += input[x];
-                    // If there is no arithmetic expression set variable to user input //OR VARIABLE IS A STRING
-                    if (operators == ' ' && x == input.Length - 1)
-                        sum += Int32.Parse(inputOperand);
-                    // Reaches end of expression, perform last calculation
-                    else if (x == input.Length - 1 && operators != ' ')
-                    {
-                        if (operators == '+')
-                            sum += Int32.Parse(inputOperand);
-                        if (operators == '-')
-                            sum -= Int32.Parse(inputOperand);
-                        if (operators == '*')
-                            sum *= Int32.Parse(inputOperand);
-                        if (operators == '/')
-                            sum /= Int32.Parse(inputOperand);
-                        if (operators == '&')
-                            sum &= Int32.Parse(inputOperand);
-                        if (operators == '|')
-                            sum |= Int32.Parse(inputOperand);
-                        if (operators == '^')
-                            sum ^= Int32.Parse(inputOperand);
-                    }
-                }
+                convertInfix(input);
+		        convertPost();
+                    
                 // Finds first avaible slot for a new variable and value
                 for (int i = 0; i < DIR_SIZE; i++)
                 {
                     // Resets value is same variable is chosen 
                     if (variable[i] == varName)
                     {
-                        variable[i] = varName;
-                        variableValue[i] = sum;
+                        variableValue[i] = interAns;
                         break;
                     }
                     // Places variable and value into empty into 1st empty index
                     else if (variable[i] == null)
                     {
                         variable[i] = varName;
-                        variableValue[i] = sum;
+                        variableValue[i] = interAns;
                         break;
                     }
                 }
