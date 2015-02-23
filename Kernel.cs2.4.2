@@ -22,15 +22,15 @@ namespace CosmosKernel1
         String[] concatValue;
         bool stringConcat;
         int numFiles;
-	char[] postFix;
-	int[] arithmeticStack;
-	String[] inputArray;
-	int stackTop;
-	string postfix; 
-	int ndx;
-	string test;
-	int interAns;
-	int inputArrayLength;
+        char[] postFix;
+        int[] arithmeticStack;
+        String[] inputArray;
+        int stackTop;
+        string postfix;
+        int ndx;
+        string test;
+        int interAns;
+        int inputArrayLength;
 
         protected override void BeforeRun()
         {
@@ -46,8 +46,8 @@ namespace CosmosKernel1
             numFiles = 0;
             Console.WriteLine("Cosmos booted successfully. \nType 'help' to see available commands.");
         }
-	
-	//******************************** CREATES POSTFIX STACK ****************************************************
+
+        //******************************** CREATES POSTFIX STACK ****************************************************
         public void push(char c)
         { postFix[++stackTop] = c; }
 
@@ -67,8 +67,8 @@ namespace CosmosKernel1
         public bool isEmptyAs()
         { return (stackTop == -1); }
 
-	        //******************************** CREATES POSTFIX CONVERSION ********************************************
-        public void ConvertInfix(String input)
+        //******************************** CREATES POSTFIX CONVERSION ********************************************
+        private void convertInfix(String input)
         {
             postFix = new char[input.Length];
             inputArray = new String[inputArrayLength];
@@ -77,11 +77,11 @@ namespace CosmosKernel1
             ndx = -1;
             test = "";
 
-            for(int x = 0; x < input.Length; x++)
+            for (int x = 0; x < input.Length; x++)
             {
                 char ch = input[x];
-                switch(ch)
-                { 
+                switch (ch)
+                {
                     case '|':
                         inputArray[++ndx] = postfix;
                         postfix = "";
@@ -100,7 +100,7 @@ namespace CosmosKernel1
                         operators(ch, 3);
                         break;
 
-                    case '+': 
+                    case '+':
                     case '-':
                         if (postfix != "")
                         {
@@ -108,7 +108,7 @@ namespace CosmosKernel1
                             postfix = "";
                         }
                         operators(ch, 4);
-                        break; 
+                        break;
 
                     case '*':
                     case '/':
@@ -134,29 +134,29 @@ namespace CosmosKernel1
 
                     default:
                         postfix += ch.ToString();
-                        if (x == input.Length -1 && input[x] != ')')
+                        if (x == input.Length - 1 && input[x] != ')')
                             inputArray[++ndx] = postfix;
                         test += postfix;
                         break;
                 }
             }
-            while(!isEmpty())
+            while (!isEmpty())
             {
                 string temp = pop().ToString();
                 inputArray[++ndx] = temp;
                 test += temp;
             }
- 
-        }
-        
-        // Process the operator 
-        public void operators(char op, int prec1) 
-        {
-            while(isEmpty() == false)
-            {
-                char operTop = pop(); 
 
-                if ( operTop == '(')
+        }
+
+        // Process the operator 
+        public void operators(char op, int prec1)
+        {
+            while (isEmpty() == false)
+            {
+                char operTop = pop();
+
+                if (operTop == '(')
                 {
                     push(operTop);
                     break;
@@ -188,13 +188,13 @@ namespace CosmosKernel1
                     }
                 }
             }
-            push(op); 
+            push(op);
         }
 
         // Process the parenthesis 
         public void paren(char ch)
         {
-            while ( !isEmpty())
+            while (!isEmpty())
             {
                 char chx = pop();
                 if (chx == '(')
@@ -208,63 +208,61 @@ namespace CosmosKernel1
             }
         }
 
-	//***************************************** ARITHMETIC ON POSTFIX **********************************
+        //***************************************** ARITHMETIC ON POSTFIX **********************************
         public void convertPost()
         {
-            
             stackTop = -1;
             arithmeticStack = new int[inputArray.Length];
             int x;
             string ch;
             int num1;
-            int num2;  
+            int num2;
             interAns = 0;
-            
-            for (x = 0; x < inputArray.Length; x++)  
+
+            for (x = 0; x < inputArray.Length; x++)
             {
-               ch = inputArray[x];  
-               
-               if (ch != "+" && ch != "-" && ch != "*" && ch != "/" && ch != "&" && ch != "|" && ch != "^")
-                   pushAs(int.Parse(ch.ToString()));
+                ch = inputArray[x];
 
-               else
-               {
-                   num2 = popAs();
-                   num1 = popAs();
-                   switch (ch[0])
-                   {
-                       case '+':
-                           interAns = num1 + num2;
-                           break;
-                       case '-':
-                           interAns = num1 - num2;
-                           break;
-                       case '*':
-                           interAns = num1 * num2;
-                           break;
-                       case '/':
-                           interAns = num1 / num2;
-                           break;
-                       case '&':
-                           interAns = num1 & num2;
-                           break;
-                       case '^':
-                           interAns = num1 ^ num2;
-                           break;
-                       case '|':
-                           interAns = num1 | num2;
-                           break;
-                       default:
-                           interAns = 0;
-                           break;
-                   }
-                   pushAs(interAns);
-               } 
+                if (ch != "+" && ch != "-" && ch != "*" && ch != "/" && ch != "&" && ch != "|" && ch != "^")
+                    pushAs(int.Parse(ch.ToString()));
+
+                else
+                {
+                    num2 = popAs();
+                    num1 = popAs();
+                    switch (ch[0])
+                    {
+                        case '+':
+                            interAns = num1 + num2;
+                            break;
+                        case '-':
+                            interAns = num1 - num2;
+                            break;
+                        case '*':
+                            interAns = num1 * num2;
+                            break;
+                        case '/':
+                            interAns = num1 / num2;
+                            break;
+                        case '&':
+                            interAns = num1 & num2;
+                            break;
+                        case '^':
+                            interAns = num1 ^ num2;
+                            break;
+                        case '|':
+                            interAns = num1 | num2;
+                            break;
+                        default:
+                            interAns = 0;
+                            break;
+                    }
+                    pushAs(interAns);
+                }
             }
-             
-            interAns = popAs(); 
-        }
 
+            interAns = popAs();
+        }
 
         protected override void Run()
         {
@@ -272,7 +270,8 @@ namespace CosmosKernel1
             Commands(Console.ReadLine());
         }
 
-        private void ComHelp(){
+        private void ComHelp()
+        {
             //should be in alphabetical order
             Console.WriteLine("\t-create <Filename>.<Extension>\tCreates a file and requests input. See -save");
             Console.WriteLine("\t-date\tDisplays current date");
@@ -317,7 +316,6 @@ namespace CosmosKernel1
             }
 
             Console.WriteLine("The current date is: " + day + " " + Cosmos.Hardware.RTC.Month + "/" + Cosmos.Hardware.RTC.DayOfTheMonth + "/" + Cosmos.Hardware.RTC.Century + Cosmos.Hardware.RTC.Year);
-
         }
 
         private void ComRun(String input)
@@ -411,69 +409,69 @@ namespace CosmosKernel1
             }
         }
 
-        private void ComSet(String input)
+        public void ComSet(String input)
         {
             string varName = input.Substring(4, input.IndexOf('=') - 5);
             string tempInput = "";
             stringConcat = false;
 
             //***************************************
-               inputArrayLength = 0; 
-                //removes spaces after "= " 
-                for (int i = (input.IndexOf('=') + 2); i < input.Length; i++)
-                {
-                    if (input[i] == '(' || input[i] == ')')
-                        inputArrayLength++; 
-                    for (int x = 0; x < DIR_SIZE; x++)
-                    {    //Checks to see if there is variable 
-                        if ((tempInput == concatVariable[x] || tempInput == variable[x])) // dont need if 
-                        {
-                            if (tempInput == concatVariable[x])
-                            {
-                                tempInput = concatValue[x];
-                                stringConcat = true;
-                            }
-                            else
-                                tempInput = variableValue[x].ToString();
-                            break;
-                        }
-                    }
-                    // This determines if there is a string 
-                    if (input[i] == '"' || input[i] == ' ' || (input[i] == '+' && stringConcat == true)) // dont need ' '
+            inputArrayLength = 0;
+            //removes spaces after "= " 
+            for (int i = (input.IndexOf('=') + 2); i < input.Length; i++)
+            {
+                if (input[i] == '(' || input[i] == ')')
+                    inputArrayLength++;
+                for (int x = 0; x < DIR_SIZE; x++)
+                {    //Checks to see if there is variable 
+                    if ((tempInput == concatVariable[x] || tempInput == variable[x])) // dont need if 
                     {
-                        if (input[i] == '"')
+                        if (tempInput == concatVariable[x])
+                        {
+                            tempInput = concatValue[x];
                             stringConcat = true;
-                        continue;
+                        }
+                        else
+                            tempInput = variableValue[x].ToString();
+                        break;
                     }
-                    tempInput += input[i];
                 }
-                input = tempInput;
-               inputArrayLength = input.Length - inputArrayLength;
-                //*******************************************
-                if (stringConcat)
+                // This determines if there is a string 
+                if (input[i] == '"' || input[i] == ' ' || (input[i] == '+' && stringConcat == true)) // dont need ' '
                 {
-                    for (int i = 0; i < DIR_SIZE; i++)
+                    if (input[i] == '"')
+                        stringConcat = true;
+                    continue;
+                }
+                tempInput += input[i];
+            }
+            input = tempInput;
+            inputArrayLength = input.Length - inputArrayLength;
+            //*******************************************
+            if (stringConcat)
+            {
+                for (int i = 0; i < DIR_SIZE; i++)
+                {
+                    // Resets value is same variable is chosen 
+                    if (concatVariable[i] == varName)
                     {
-                        // Resets value is same variable is chosen 
-                        if (concatVariable[i] == varName)
-                        {
-                            concatValue[i] = input;
-                            break;
-                        }
-                        // Places variable and value into 1st empty index
-                        else if (concatVariable[i] == null)
-                        {
-                            concatVariable[i] = varName;
-                            concatValue[i] = input;
-                            break;
-                        }
+                        concatValue[i] = input;
+                        break;
+                    }
+                    // Places variable and value into 1st empty index
+                    else if (concatVariable[i] == null)
+                    {
+                        concatVariable[i] = varName;
+                        concatValue[i] = input;
+                        break;
                     }
                 }
+            }
             else
             {
                 convertInfix(input);
-		        convertPost();
-                    
+                convertPost();
+
                 // Finds first avaible slot for a new variable and value
                 for (int i = 0; i < DIR_SIZE; i++)
                 {
