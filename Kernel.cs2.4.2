@@ -28,7 +28,6 @@ namespace CosmosKernel1
         int stackTop;
         string postfix;
         int ndx;
-        string test;
         int interAns;
         int inputArrayLength;
 
@@ -75,7 +74,6 @@ namespace CosmosKernel1
             stackTop = -1;
             postfix = "";
             ndx = -1;
-            test = "";
 
             for (int x = 0; x < input.Length; x++)
             {
@@ -136,7 +134,6 @@ namespace CosmosKernel1
                         postfix += ch.ToString();
                         if (x == input.Length - 1 && input[x] != ')')
                             inputArray[++ndx] = postfix;
-                        test += postfix;
                         break;
                 }
             }
@@ -144,7 +141,6 @@ namespace CosmosKernel1
             {
                 string temp = pop().ToString();
                 inputArray[++ndx] = temp;
-                test += temp;
             }
 
         }
@@ -184,7 +180,6 @@ namespace CosmosKernel1
                     {
                         string temp = operTop.ToString();
                         inputArray[++ndx] = temp;
-                        test += temp;
                     }
                 }
             }
@@ -203,7 +198,6 @@ namespace CosmosKernel1
                 {
                     string temp = chx.ToString();
                     inputArray[++ndx] = temp;
-                    test += temp;
                 }
             }
         }
@@ -224,7 +218,7 @@ namespace CosmosKernel1
                 ch = inputArray[x];
 
                 if (ch != "+" && ch != "-" && ch != "*" && ch != "/" && ch != "&" && ch != "|" && ch != "^")
-                    pushAs(int.Parse(ch.ToString()));
+                    pushAs(Int32.Parse(ch));
 
                 else
                 {
@@ -420,7 +414,7 @@ namespace CosmosKernel1
             //removes spaces after "= " 
             for (int i = (input.IndexOf('=') + 2); i < input.Length; i++)
             {
-                if (input[i] == '(' || input[i] == ')')
+                if (input[i] == '+' || input[i] == '-' || input[i] == '*' || input[i] == '/' || input[i] == '&' || input[i] == '|' || input[i] == '^')
                     inputArrayLength++;
                 for (int x = 0; x < DIR_SIZE; x++)
                 {    //Checks to see if there is variable 
