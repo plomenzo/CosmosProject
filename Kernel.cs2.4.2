@@ -446,7 +446,7 @@ namespace CosmosKernel1
                 tempInput += input[i];
             }
             input = tempInput;
-            inputArrayLength = input.Length - inputArrayLength;
+            inputArrayLength += (inputArrayLength + 1);
             //*******************************************
             if (stringConcat)
             {
