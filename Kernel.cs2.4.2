@@ -336,8 +336,9 @@ namespace CosmosKernel1
                     int lineEnd = data.IndexOf('~');
                     String line = data.Substring(0, lineEnd);
 
-                    Console.WriteLine(line);
+                    Console.WriteLine("Command: " + line);
                     Commands(line); //  <-- Sweet
+                    Console.WriteLine("")
                     data = data.Substring(lineEnd + 1, 1000);
                 }
                 Console.WriteLine("*** BATCH COMPLETE ***");
@@ -356,12 +357,13 @@ namespace CosmosKernel1
             int runningsize = 0;
             String inputdata = "";
             String fullFileName = input.Substring(7, 100);
-
+            Console.Write("Enter command or enter save to save file\n>");
             input = Console.ReadLine();
             while (input.ToLower() != "save") //gathering each lines input data
             {
                 runningsize += input.Length;
                 inputdata += input + "~";
+                 Console.Write("> ");
                 input = Console.ReadLine();
             }
 
@@ -460,6 +462,7 @@ namespace CosmosKernel1
                         break;
                     }
                 }
+                Console.WriteLine(varName + " has been set to: " + input);
             }
             else
             {
@@ -483,6 +486,7 @@ namespace CosmosKernel1
                         break;
                     }
                 }
+                Console.WriteLine(varName + " has been set to: " + interAns);
             }
         }
 
@@ -509,7 +513,7 @@ namespace CosmosKernel1
                 {
                     if (variable[i] == varName)
                     {
-                        Console.Write(variableValue[i]);
+                        Console.WriteLine("value for " + varName + ": " + variableValue[i]);
                         break;
                     }
                 }
