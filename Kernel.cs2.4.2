@@ -17,7 +17,7 @@ namespace CosmosKernel1
         String[] filedate;
         int[] filesize;
         String[] variable;
-        int[] variableValue;
+        String[] variableValue; 
         String[] concatVariable;
         String[] concatValue;
         bool stringConcat;
@@ -39,7 +39,7 @@ namespace CosmosKernel1
             filedate = new String[DIR_SIZE];
             filesize = new int[DIR_SIZE];
             variable = new String[DIR_SIZE];
-            variableValue = new int[DIR_SIZE];
+            variableValue = new String[DIR_SIZE];  
             concatVariable = new String[DIR_SIZE];
             concatValue = new String[DIR_SIZE];
             numFiles = 0;
@@ -145,7 +145,7 @@ namespace CosmosKernel1
 
         }
 
-        // Process the operator 
+        //******************************** PROCESS THE OPERATORS **************************************************** 
         public void operators(char op, int prec1)
         {
             while (isEmpty() == false)
@@ -186,7 +186,7 @@ namespace CosmosKernel1
             push(op);
         }
 
-        // Process the parenthesis 
+        //******************************** PROCESS THE PARENTHESIS ****************************************************
         public void paren(char ch)
         {
             while (!isEmpty())
@@ -336,9 +336,9 @@ namespace CosmosKernel1
                     int lineEnd = data.IndexOf('~');
                     String line = data.Substring(0, lineEnd);
 
-                    Console.WriteLine("Command: " + line);
-                    Commands(line); //  <-- Sweet
-                    Console.WriteLine("")
+                    Console.WriteLine("Command: " + line);  
+                    Commands(line); 
+                    Console.WriteLine(""); 
                     data = data.Substring(lineEnd + 1, 1000);
                 }
                 Console.WriteLine("*** BATCH COMPLETE ***");
@@ -357,13 +357,13 @@ namespace CosmosKernel1
             int runningsize = 0;
             String inputdata = "";
             String fullFileName = input.Substring(7, 100);
-            Console.Write("Enter command or enter save to save file\n>");
+            Console.Write("Enter command or enter save to save file\n>");   
             input = Console.ReadLine();
             while (input.ToLower() != "save") //gathering each lines input data
             {
                 runningsize += input.Length;
                 inputdata += input + "~";
-                 Console.Write("> ");
+                Console.Write("> ");  
                 input = Console.ReadLine();
             }
 
@@ -404,120 +404,166 @@ namespace CosmosKernel1
                 Console.WriteLine(filenames[i] + "               \t" + fileext[i] + "     \t" + filedate[i] + "\t" + filesize[i] + " b");
             }
         }
-
+        //******************************** VARIABLE CHECK ****************************************************
+        public string variableCheck(string var)
+        {
+            //Checks to see if there is variable
+            for (int x = 0; x < DIR_SIZE; x++)
+            {
+                if (var == variable[x])
+                {
+                    string temp = variableValue[x];
+                    if (temp[0] == '"')
+                    {
+                        stringConcat = true;
+                        return temp.Substring(1, temp.Length);
+                    }
+                    else
+                        return variableValue[x];
+                }
+            }
+            return "<>";
+        }
+        //******************************** STORES VARIABLE ****************************************************
+        private void storeVariable(string input, int ndx)
+        {
+            if (stringConcat) // If its a string
+            {
+                if (input[0] != '"')
+                    variableValue[ndx] = '"' + input;
+                else
+                    variableValue[ndx] = input;
+            }
+            else // Perform int arithmetic 
+            {
+                convertInfix(input);
+                convertPost(); 
+                variableValue[ndx] = interAns.ToString();
+            }
+        }
+        //******************************** SET ****************************************************
         public void ComSet(String input)
         {
             string varName = input.Substring(4, input.IndexOf('=') - 5);
             string tempInput = "";
             stringConcat = false;
-
-            //***************************************
+            bool inQuotes = false;
+            int startOfInput = input.IndexOf('=') + 1;
+            string varCheck = "";
+            string returnedVariableValue = ""; 
+       
             inputArrayLength = 0;
-            //removes spaces after "= " 
-            for (int i = (input.IndexOf('=') + 2); i < input.Length; i++)
+
+            // Determines if 1st char after = is a space and adjust the starting position of the user input
+            if (input[startOfInput] == ' ')
+                startOfInput += 1;
+            
+            for (int i = startOfInput; i < input.Length; i++)
             {
+                // Counts the operators to determine input length
                 if (input[i] == '+' || input[i] == '-' || input[i] == '*' || input[i] == '/' || input[i] == '&' || input[i] == '|' || input[i] == '^')
+                {
                     inputArrayLength++;
-                for (int x = 0; x < DIR_SIZE; x++)
-                {    //Checks to see if there is variable 
-                    if ((tempInput == concatVariable[x] || tempInput == variable[x])) // dont need if 
+                    returnedVariableValue = variableCheck(varCheck);
+                    if (stringConcat)
                     {
-                        if (tempInput == concatVariable[x])
+                        tempInput = tempInput.Substring(0, tempInput.Length - varCheck.Length) + returnedVariableValue;
+                        if (input[i] == '-' || input[i] == '*' || input[i] == '/' || input[i] == '&' || input[i] == '|' || input[i] == '^')
                         {
-                            tempInput = concatValue[x];
-                            stringConcat = true;
+                            Console.WriteLine("Invalid operation on string concatenation");
+                            break;
                         }
-                        else
-                            tempInput = variableValue[x].ToString();
-                        break;
                     }
+                    else
+                    {
+                        if (returnedVariableValue != "<>") // If there exist a variable
+                        {
+                            if (tempInput.Length - varCheck.Length == 0) // If the variable is the first operand
+                                tempInput = returnedVariableValue;
+                            else
+                            {
+                                if (tempInput[tempInput.Length - 1] == ')')
+                                    tempInput = tempInput.Substring(0, (tempInput.Length - varCheck.Length) - 1) + returnedVariableValue + ")";
+                                else
+                                    tempInput = tempInput.Substring(0, tempInput.Length - varCheck.Length) + returnedVariableValue;
+                            }
+                        }
+                    }
+                    varCheck = "";   
                 }
-                // This determines if there is a string 
-                if (input[i] == '"' || input[i] == ' ' || (input[i] == '+' && stringConcat == true)) // dont need ' '
+                    
+                // Skip input collection 
+                if (input[i] == '"' || (input[i] == '+' && stringConcat == true) || (input[i] == ' ' && inQuotes == false))     
                 {
                     if (input[i] == '"')
+                    {
                         stringConcat = true;
+                        if (inQuotes)
+                            inQuotes = false;
+                        if (!inQuotes)
+                            inQuotes = true;
+                    }
                     continue;
                 }
-                tempInput += input[i];
-            }
-            input = tempInput;
-            inputArrayLength += (inputArrayLength + 1);
-            //*******************************************
-            if (stringConcat)
-            {
-                for (int i = 0; i < DIR_SIZE; i++)
-                {
-                    // Resets value is same variable is chosen 
-                    if (concatVariable[i] == varName)
-                    {
-                        concatValue[i] = input;
-                        break;
-                    }
-                    // Places variable and value into 1st empty index
-                    else if (concatVariable[i] == null)
-                    {
-                        concatVariable[i] = varName;
-                        concatValue[i] = input;
-                        break;
-                    }
+
+                if (input[i] == '+' || input[i] == '-' || input[i] == '*' || input[i] == '/' || input[i] == '&' || input[i] == '|' || input[i] == '^')
+                    tempInput += input[i];
+                else {
+                    tempInput += input[i];
+                    if (input[i] != '(' && input[i] != ')')
+                        varCheck += input[i];
                 }
-                Console.WriteLine(varName + " has been set to: " + input);
             }
+            returnedVariableValue = variableCheck(varCheck);
+            if (returnedVariableValue != "<>" && varCheck == tempInput) // Checks if there is only one variable as an operand
+                input = returnedVariableValue;
+            else if (returnedVariableValue != "<>" && varCheck != tempInput) // Checks to see if variable at last operand
+            {
+                if (tempInput[tempInput.Length - 1] == ')')
+                    input = tempInput.Substring(0, (tempInput.Length - varCheck.Length) - 1) + returnedVariableValue + ")";
+                else
+                    input = tempInput.Substring(0, tempInput.Length - varCheck.Length) + returnedVariableValue;
+            }
+
             else
+                input = tempInput;
+            inputArrayLength += (inputArrayLength + 1);
+
+            //******************* STORES INPUT ************************ 
+            // Finds first avaible slot for a new variable and value
+            for (int i = 0; i < DIR_SIZE; i++)
             {
-                convertInfix(input);
-                convertPost();
-
-                // Finds first avaible slot for a new variable and value
-                for (int i = 0; i < DIR_SIZE; i++)
+                if (variable[i] == varName)
                 {
-                    // Resets value is same variable is chosen 
-                    if (variable[i] == varName)
-                    {
-                        variableValue[i] = interAns;
-                        break;
-                    }
-                    // Places variable and value into empty into 1st empty index
-                    else if (variable[i] == null)
-                    {
-                        variable[i] = varName;
-                        variableValue[i] = interAns;
-                        break;
-                    }
+                    storeVariable(input, i);
+                    break;
                 }
-                Console.WriteLine(varName + " has been set to: " + interAns);
-            }
+                else if (variable[i] == null)
+                {
+                    variable[i] = varName;
+                    storeVariable(input, i);
+                    break;
+                }
+            }      
         }
-
+        //******************************** OUT ****************************************************
         private void ComOut(String input)
         {
             // Sets the variable to the the chosen variable
             string varName = input.Substring(4, input.Length);
 
-            if (stringConcat)
-            {
-                for (int i = 0; i < DIR_SIZE; i++)
-                {
-                    if (concatVariable[i] == varName)
-                    {
-                        Console.Write(concatValue[i]);
-                        break;
-                    }
-                }
-            }
-            else
-            {
                 // Looks for value and outputs value for selected variable
                 for (int i = 0; i < DIR_SIZE; i++)
                 {
                     if (variable[i] == varName)
                     {
-                        Console.WriteLine("value for " + varName + ": " + variableValue[i]);
+                        string value = variableValue[i];
+                        if (value[0] == '"')
+                            value = value.Substring(1, value.Length);
+                        Console.WriteLine("value for " + varName + ": " + value);  
                         break;
                     }
                 }
-            }
         }
 
         private void ComUnknown(String input)
