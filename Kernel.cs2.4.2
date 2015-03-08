@@ -17,7 +17,7 @@ namespace CosmosKernel1
         String[] filedate;
         int[] filesize;
         String[] variable;
-        String[] variableValue; 
+        String[] variableValue;
         String[] concatVariable;
         String[] concatValue;
         bool stringConcat;
@@ -39,7 +39,7 @@ namespace CosmosKernel1
             filedate = new String[DIR_SIZE];
             filesize = new int[DIR_SIZE];
             variable = new String[DIR_SIZE];
-            variableValue = new String[DIR_SIZE];  
+            variableValue = new String[DIR_SIZE];
             concatVariable = new String[DIR_SIZE];
             concatValue = new String[DIR_SIZE];
             numFiles = 0;
@@ -314,35 +314,75 @@ namespace CosmosKernel1
 
         private void ComRun(String input)
         {
-            var fileName = input.Substring(4, 100);
-            int index = -1;
+            var inputStringAfterEquals = input.Substring(4, 100);
+            String[] files = inputStringAfterEquals.Split(' ');
+            int numFiles = files.Length;
+            int[] indexs = new int[numFiles];
 
-            for (int i = 0; i < DIR_SIZE; i++)
+            for (int i = 0; i < numFiles; i++) //sets all indexes to -1
             {
-                if (filenames[i] != null && fileName == filenames[i] + fileext[i])
+                indexs[i] = -1;
+            }
+
+            for (int j = 0; j < numFiles; j++) //adds indexes of each file input to indexs[]
+            {
+                inputStringAfterEquals = files[j];
+
+                for (int i = 0; i < DIR_SIZE; i++) //checks if files exsist
                 {
-                    index = i;
-                    break;
+                    if (filenames[i] != null && inputStringAfterEquals == filenames[i] + fileext[i])
+                    {
+                        indexs[j] = i;
+                        break;
+                    }
                 }
             }
 
-            if (index == -1)
-                Console.WriteLine("File not found.");
-            else
+            bool exit = false;
+
+            for (int i = 0; i < numFiles; i++) //checks for missing files
             {
-                String data = filedata[index];
-                while (data != "")
+                if (indexs[i] == -1){
+                    Console.WriteLine(files[i] + " was not found.");
+                    exit = true;
+                }
+            }
+
+            if (exit) //exits if even one file is not found
+            {
+                return;
+            }
+
+            String[] currentData = (String[]) filedata.Clone();
+            int exitCount = 0;
+
+            while (exitCount < numFiles){ //runs every command in every batch, round robbin
+
+                exitCount = 0;
+
+                for (int i = 0; i < numFiles; i++)
                 {
+                    String data = currentData[indexs[i]];
+
                     int lineEnd = data.IndexOf('~');
-                    String line = data.Substring(0, lineEnd);
 
-                    Console.WriteLine("Command: " + line);  
-                    Commands(line); 
-                    Console.WriteLine(""); 
-                    data = data.Substring(lineEnd + 1, 1000);
+                    if (lineEnd == -1){
+                        exitCount++;
+                        currentData[indexs[i]] = "";
+                        continue;
+                    }
+
+                    String line = data.Substring(0, lineEnd);
+                
+                    Console.WriteLine(filenames[indexs[i]] + " Command: " + line);
+                    Commands(line);
+                    //Console.WriteLine(""); //removed for screen space
+                    currentData[indexs[i]] = data.Substring(lineEnd + 1, 1000);
                 }
-                Console.WriteLine("*** BATCH COMPLETE ***");
+
             }
+
+            Console.WriteLine("*** BATCH COMPLETE ***");
         }
 
         private void ComEcho(String input)
@@ -357,13 +397,13 @@ namespace CosmosKernel1
             int runningsize = 0;
             String inputdata = "";
             String fullFileName = input.Substring(7, 100);
-            Console.Write("Enter command or enter save to save file\n>");   
+            Console.Write("Enter command or enter save to save file\n>");
             input = Console.ReadLine();
             while (input.ToLower() != "save") //gathering each lines input data
             {
                 runningsize += input.Length;
                 inputdata += input + "~";
-                Console.Write("> ");  
+                Console.Write("> ");
                 input = Console.ReadLine();
             }
 
@@ -437,7 +477,7 @@ namespace CosmosKernel1
             else // Perform int arithmetic 
             {
                 convertInfix(input);
-                convertPost(); 
+                convertPost();
                 variableValue[ndx] = interAns.ToString();
             }
         }
@@ -450,14 +490,14 @@ namespace CosmosKernel1
             bool inQuotes = false;
             int startOfInput = input.IndexOf('=') + 1;
             string varCheck = "";
-            string returnedVariableValue = ""; 
-       
+            string returnedVariableValue = "";
+
             inputArrayLength = 0;
 
             // Determines if 1st char after = is a space and adjust the starting position of the user input
             if (input[startOfInput] == ' ')
                 startOfInput += 1;
-            
+
             for (int i = startOfInput; i < input.Length; i++)
             {
                 // Counts the operators to determine input length
@@ -489,11 +529,11 @@ namespace CosmosKernel1
                             }
                         }
                     }
-                    varCheck = "";   
+                    varCheck = "";
                 }
-                    
+
                 // Skip input collection 
-                if (input[i] == '"' || (input[i] == '+' && stringConcat == true) || (input[i] == ' ' && inQuotes == false))     
+                if (input[i] == '"' || (input[i] == '+' && stringConcat == true) || (input[i] == ' ' && inQuotes == false))
                 {
                     if (input[i] == '"')
                     {
@@ -508,7 +548,8 @@ namespace CosmosKernel1
 
                 if (input[i] == '+' || input[i] == '-' || input[i] == '*' || input[i] == '/' || input[i] == '&' || input[i] == '|' || input[i] == '^')
                     tempInput += input[i];
-                else {
+                else
+                {
                     tempInput += input[i];
                     if (input[i] != '(' && input[i] != ')')
                         varCheck += input[i];
@@ -544,7 +585,7 @@ namespace CosmosKernel1
                     storeVariable(input, i);
                     break;
                 }
-            }      
+            }
         }
         //******************************** OUT ****************************************************
         private void ComOut(String input)
@@ -552,18 +593,18 @@ namespace CosmosKernel1
             // Sets the variable to the the chosen variable
             string varName = input.Substring(4, input.Length);
 
-                // Looks for value and outputs value for selected variable
-                for (int i = 0; i < DIR_SIZE; i++)
+            // Looks for value and outputs value for selected variable
+            for (int i = 0; i < DIR_SIZE; i++)
+            {
+                if (variable[i] == varName)
                 {
-                    if (variable[i] == varName)
-                    {
-                        string value = variableValue[i];
-                        if (value[0] == '"')
-                            value = value.Substring(1, value.Length);
-                        Console.WriteLine("value for " + varName + ": " + value);  
-                        break;
-                    }
+                    string value = variableValue[i];
+                    if (value[0] == '"')
+                        value = value.Substring(1, value.Length);
+                    Console.WriteLine("value for " + varName + ": " + value);
+                    break;
                 }
+            }
         }
 
         private void ComUnknown(String input)
@@ -571,7 +612,7 @@ namespace CosmosKernel1
             Console.Write("'" + input + "'" + " is not a recognized command");
         }
 
-        private void Commands(String input)
+        public void Commands(String input)
         {
             if (input.ToLower() == "help") //help
                 ComHelp();
