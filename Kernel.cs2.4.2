@@ -353,7 +353,10 @@ namespace CosmosKernel1
                 return;
             }
 
-            String[] currentData = (String[]) filedata.Clone();
+            String[] currentData = new String[DIR_SIZE];// = (String[]) filedata.Clone();
+
+            Array.Copy(filedata, currentData, DIR_SIZE);
+
             int exitCount = 0;
 
             while (exitCount < numFiles){ //runs every command in every batch, round robbin
@@ -397,7 +400,7 @@ namespace CosmosKernel1
             int runningsize = 0;
             String inputdata = "";
             String fullFileName = input.Substring(7, 100);
-            Console.Write("Enter command or enter save to save file\n>");
+            Console.Write("Enter command or enter save to save file\n> ");
             input = Console.ReadLine();
             while (input.ToLower() != "save") //gathering each lines input data
             {
